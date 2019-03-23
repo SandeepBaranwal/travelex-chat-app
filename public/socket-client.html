@@ -1,0 +1,60 @@
+<html>
+
+<head>
+    <title>Chat App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- it provide the socket io instance on the client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-center text-primary">
+            Chat App
+        </h1>
+        <form class="well">
+            <div class="form-group">
+                <textarea id="taMsg" class="form-control" cols="30" rows="10"></textarea>
+            </div>
+            <div class="row">
+                <div class="colxs-9 col-sm-9 col-md-9 col-lg-9">
+                    <input type="text" id="txtMsg" class="form-control">
+                </div>
+                <div class="colxs-3 col-sm-3 col-md-3 col-lg-3">
+                    <button type="button" class="btn btn-large btn-block btn-primary">
+                        Send
+                    </button>
+                </div>
+            </div>
+        </form>
+        <script>
+            $(document).ready(() => {
+
+                var chattername = prompt("Chat name pls");
+                //var socket = io.connect("http://127.0.0.1:3000");
+                //var socket = io.connect("http://localhost:3000");
+                var socket = io.connect("/");
+                // display the message emmited from server
+                socket.on("acknowledge", msg => {
+                    // , is not working in alert concatination
+                    alert("Sarver says : " + msg.message);
+                });
+
+                $("button").on("click", function () {
+                    var val = $("#txtMsg").val();
+                    socket.emit("msgToServer", chattername,val);
+                    $("#txtMsg").val("");
+
+                });
+                socket.on("serverMsg", (chatter, msg) => {
+                    $("#taMsg").append(chatter + " : " + msg + "\n");
+                })
+            })
+
+        </script>
+    </div>
+</body>
+
+</html>
